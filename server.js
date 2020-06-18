@@ -13,7 +13,7 @@ var storage = multer.diskStorage({
   }
 });
 
-var upload = multer({ storage }).single('file');
+var upload = multer({ storage }).array('file');
 
 app.post('/upload',function(req, res) {
   upload(req, res, function (err) {
