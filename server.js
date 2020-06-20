@@ -27,11 +27,6 @@ app.post('/upload',(req, res) => {
   });
 });
 
-// let hi = async () => {
-  
-// } 
-// hi();
-
 app.get('/view', async (req, res) => {
   const dir = './uploads';
   const files = await fs.promises.readdir(dir);
