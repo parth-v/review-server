@@ -3,7 +3,10 @@ const fs = require('fs');
 var app = express();
 var multer = require('multer')
 var cors = require('cors');
+var mail = require('./src/MailService/mail');
 app.use(cors());
+
+mail.sendEmail();
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
