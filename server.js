@@ -4,9 +4,30 @@ var app = express();
 var multer = require('multer')
 var cors = require('cors');
 var mail = require('./src/MailService/mail');
-app.use(cors());
+var bodyParser = require('body-parser')
+var comments = [
+  {
+    name: 'User1',
+    message: 'I think the article is great!!',
+    time: ''
+  },
+  {
+    name: 'User2',
+    message: 'Its perfect!!',
+    time: ''
+  }
+];
+const today = new Date();
+const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+const dateTime = date+' '+time;
+comments[0].time = dateTime;
+comments[1].time = dateTime;
 
-mail.sendEmail();
+app.use(cors());
+app.use(bodyParser.json());
+
+//mail.sendEmail();
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -41,6 +62,22 @@ app.get('/download', (req, res) => {
   const filePath = dir + req.query.name;
   console.log(filePath);
   return res.download(filePath);
+});
+
+app.post('/comment', (req, res) => {
+  const name = req.body.name;
+  const message = req.body.message;
+  let today = new Date();
+  let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  let dateTime = date+' '+time; 
+  const comment = { name, message, time:dateTime };
+  comments.push(comment);
+  return res.status(200).json(comment);
+});
+
+app.get('/viewComments', async (req, res) => {
+  return res.json(comments);
 });
 
 app.listen(8000, () => console.log('App running on port 8000') );
