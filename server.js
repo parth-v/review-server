@@ -32,6 +32,17 @@ var users = [
     password: 'raj'
   }
 ];
+
+var files = [
+  {
+    name: "Sample.pdf",
+    userId: "1"
+  },
+  {
+    name: "Dummy.pdf",
+    userId: "2"
+  }
+];
 const today = new Date();
 const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
 const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
@@ -138,5 +149,35 @@ app.post('/signin',async (req, res) => {
     return res.status(422).send({ error: 'Invalid email or password' });
   }
 });
+
+app.get('/papers', async (req, res) => {
+  //const tracks = await Track.find({ userId: req.user._id });
+  //res.send(tracks); 
+  //const dir = './uploads';
+  //const files = await fs.promises.readdir(dir);
+  const id = req.body.id;
+  const papers = files.filter(file=>file.userId===id);
+  return res.json(papers);
+});
+
+app.get('/users', async (req,res) => {
+  return res.json(users);
+});
+
+// app.post('/tracks', async (req, res) => {
+//   const { name, locations } = req.body;
+
+//   if(!name || !locations) {
+//     return res.status(422).send({ error: 'You must provide name and locations'});
+//   }
+
+//   try {
+//     const track = new Track({ name, locations, userId: req.user._id });
+//     await track.save();
+//     res.send(track);
+//   } catch(err) {
+//     res.status(422).send({ error: err.message }); 
+//   }
+// });
 
 app.listen(8000, () => console.log('App running on port 8000') );
