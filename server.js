@@ -9,14 +9,19 @@ const bodyParser = require('body-parser');
 //const requireAuth = require('./middlewares/requireAuth');
 var comments = [
   {
-    name: 'User1',
-    message: 'I think the article is great!!',
-    time: ''
-  },
-  {
-    name: 'User2',
-    message: 'Its perfect!!',
-    time: ''
+    paperId: 'aa',
+    commentz: [
+      {
+        name: 'User1',
+        message: 'I think the article is great!!',
+        time: ''
+      },
+      {
+        name: 'User2',
+        message: 'Its perfect!!',
+        time: ''
+      }
+    ]
   }
 ];
 
@@ -35,10 +40,12 @@ var users = [
 
 var files = [
   {
+    _id: "aa",
     name: "Sample.pdf",
     userId: "1"
   },
   {
+    _id: "bb",
     name: "Dummy.pdf",
     userId: "2"
   }
@@ -47,8 +54,8 @@ const today = new Date();
 const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
 const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 const dateTime = date+' '+time;
-comments[0].time = dateTime;
-comments[1].time = dateTime;
+comments[0].commentz[0].time = dateTime;
+comments[0].commentz[0].time = dateTime;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -156,7 +163,7 @@ app.get('/papers', async (req, res) => {
   //const dir = './uploads';
   //const files = await fs.promises.readdir(dir);
   const id = req.body.id;
-  const papers = files.filter(file=>file.userId===id);
+  const papers = files.filter(file => file.userId===id);
   return res.json(papers);
 });
 
@@ -164,20 +171,33 @@ app.get('/users', async (req,res) => {
   return res.json(users);
 });
 
-// app.post('/tracks', async (req, res) => {
-//   const { name, locations } = req.body;
+app.get('/paper', async (req, res) => {
+  const id = req.body.id;
+  const commentes = comments.filter(comment => comment.paperId===id);
+  if(commentes.length>0)
+  {
+    //console.log(commentes, commentes.commentz);
+    return res.json(commentes[0].commentz);
+  }
+  else {
+    return res.json(commentes);
+  }
+});
 
-//   if(!name || !locations) {
-//     return res.status(422).send({ error: 'You must provide name and locations'});
-//   }
+app.post('/paper', async (req, res) => {
+  const { name, files, user } = req.body;
 
-//   try {
-//     const track = new Track({ name, locations, userId: req.user._id });
-//     await track.save();
-//     res.send(track);
-//   } catch(err) {
-//     res.status(422).send({ error: err.message }); 
-//   }
-// });
+  if(!name || !files || !user) {
+    return res.status(422).send({ error: 'You must provide name and files'});
+  }
+
+  // try {
+  //   const track = new Track({ name, files, userId: req.user._id });
+  //   await track.save();
+  //   res.send(track);
+  // } catch(err) {
+  //   res.status(422).send({ error: err.message }); 
+  // }
+});
 
 app.listen(8000, () => console.log('App running on port 8000') );
