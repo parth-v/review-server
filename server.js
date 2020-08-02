@@ -1,10 +1,12 @@
-var express = require('express');
+const express = require('express');
 const fs = require('fs');
-var app = express();
-var multer = require('multer')
-var cors = require('cors');
-var mail = require('./src/MailService/mail');
-var bodyParser = require('body-parser')
+const jwt = require('jsonwebtoken');
+const app = express();
+const multer = require('multer')
+const cors = require('cors');
+const mail = require('./src/MailService/mail');
+const bodyParser = require('body-parser');
+//const requireAuth = require('./middlewares/requireAuth');
 var comments = [
   {
     name: 'User1',
@@ -15,6 +17,19 @@ var comments = [
     name: 'User2',
     message: 'Its perfect!!',
     time: ''
+  }
+];
+
+var users = [
+  {
+    _id: '1',
+    email: 'Rohan@gmail.com',
+    password: 'roh'
+  },
+  {
+    _id: '2',
+    email: 'Raju@yahoo.com',
+    password: 'raj'
   }
 ];
 const today = new Date();
@@ -28,6 +43,9 @@ app.use(cors());
 app.use(bodyParser.json());
 
 //mail.sendEmail();
+// app.get('/',requireAuth, (req, res) => {
+//   res.send(`Your email: ${ req.user.email }`);
+// });
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -78,6 +96,47 @@ app.post('/comment', (req, res) => {
 
 app.get('/viewComments', async (req, res) => {
   return res.json(comments);
+});
+
+app.post('/signup', async (req, res) => {
+  
+  const { email, password } = req.body;
+  try {
+    //const user = new User({ email, password });
+    //await user.save();
+    const user = users.push({ _id:'3', email, password });
+    console.log(users);
+    const token = jwt.sign({ userId: user._id }, 'MY_SECRET_KEY');
+    res.send({ token });
+  } catch(err) {
+    return res.status(422).send(err.message);
+  }
+});
+
+app.post('/signin',async (req, res) => {
+  const { email, password } = req.body;
+  //console.log(email, password);
+
+  if(!email || !password) {
+    return res.status(422).send({ error: 'Must provide email and password' });
+  }
+
+  //const user = await User.findOne({ email });
+  const user = users.find((user) => user.email === email);
+
+  if(!user) {
+    //return res.status(400).json("Wrong credentials!");
+    return res.status(422).send({ error: 'Invalid email or password' });
+  }
+
+  try {
+    //await user.comparePassword(password);
+    if(user.password !== password) { throw new Error(); }
+    const token = jwt.sign({ userId: user._id }, 'MY_SECRET_KEY');
+    res.send({ token });
+  } catch (err) {
+    return res.status(422).send({ error: 'Invalid email or password' });
+  }
 });
 
 app.listen(8000, () => console.log('App running on port 8000') );
