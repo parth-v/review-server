@@ -28,13 +28,21 @@ var comments = [
 var users = [
   {
     _id: '1',
-    email: 'Rohan@gmail.com',
-    password: 'roh'
+    email: 'admin@g.com',
+    password: 'admin',
+    role: "admin"
   },
   {
     _id: '2',
-    email: 'Raju@yahoo.com',
-    password: 'raj'
+    email: 'author@g.com',
+    password: 'author',
+    role: "author"
+  },
+  {
+    _id: '3',
+    email: 'reviewer@g.com',
+    password: 'reviewer',
+    role: "reviewer"
   }
 ];
 
@@ -172,6 +180,16 @@ app.get('/users', async (req,res) => {
 });
 
 app.get('/paper', async (req, res) => {
+  const paper = files.filter(paper => paper._id === req.body.id);
+  return res.json(paper);
+});
+
+app.get('/user', async(req, res) => {
+  const user = users.filter(user => user._id === req.body.id);
+  return res.json(user);
+});
+
+app.get('/papercomm', async (req, res) => {
   const id = req.body.id;
   const commentes = comments.filter(comment => comment.paperId===id);
   if(commentes.length>0)
@@ -184,20 +202,20 @@ app.get('/paper', async (req, res) => {
   }
 });
 
-app.post('/paper', async (req, res) => {
-  const { name, files, user } = req.body;
+// app.post('/paper', async (req, res) => {
+//   const { name, files, user } = req.body;
 
-  if(!name || !files || !user) {
-    return res.status(422).send({ error: 'You must provide name and files'});
-  }
+//   if(!name || !files || !user) {
+//     return res.status(422).send({ error: 'You must provide name and files'});
+//   }
 
-  // try {
-  //   const track = new Track({ name, files, userId: req.user._id });
-  //   await track.save();
-  //   res.send(track);
-  // } catch(err) {
-  //   res.status(422).send({ error: err.message }); 
-  // }
-});
+//   // try {
+//   //   const track = new Track({ name, files, userId: req.user._id });
+//   //   await track.save();
+//   //   res.send(track);
+//   // } catch(err) {
+//   //   res.status(422).send({ error: err.message }); 
+//   // }
+// });
 
 app.listen(8000, () => console.log('App running on port 8000') );
