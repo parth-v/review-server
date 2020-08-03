@@ -9,17 +9,18 @@ const bodyParser = require('body-parser');
 //const requireAuth = require('./middlewares/requireAuth');
 var comments = [
   {
+    _id: "AAA",
     paperId: 'aa',
     commentz: [
       {
         name: 'User1',
         message: 'I think the article is great!!',
-        time: ''
+        time: "On 3/8/2020 At 23:15"
       },
       {
         name: 'User2',
         message: 'Its perfect!!',
-        time: ''
+        time: "On 3/8/2020 At 23:45"
       }
     ]
   }
@@ -36,21 +37,31 @@ var users = [
     _id: '2',
     email: 'author@g.com',
     password: 'author',
-    role: "author"
+    role: "author",
+    papers: [
+      "aa",
+      "bb"
+    ]
   },
   {
     _id: '3',
     email: 'reviewer@g.com',
     password: 'reviewer',
-    role: "reviewer"
+    role: "reviewer",
+    papers: [
+      "aa"
+    ]
   }
 ];
 
-var files = [
+var papers = [
   {
     _id: "aa",
     name: "Sample.pdf",
-    userId: "1"
+    userId: "1",
+    comments: [
+      "AAA"
+    ]
   },
   {
     _id: "bb",
@@ -58,12 +69,10 @@ var files = [
     userId: "2"
   }
 ];
-const today = new Date();
-const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-const dateTime = date+' '+time;
-comments[0].commentz[0].time = dateTime;
-comments[0].commentz[0].time = dateTime;
+// const today = new Date();
+// const date = today.getDate() + '/' + (today.getMonth()+1) + '/' + today.getFullYear();
+// const time = today.getHours() + ":" + today.getMinutes();
+// const dateTime = 'On ' + date + ' At '+ time;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -112,16 +121,21 @@ app.post('/comment', (req, res) => {
   const name = req.body.name;
   const message = req.body.message;
   let today = new Date();
-  let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-  let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-  let dateTime = date+' '+time; 
+  let date = today.getDate() + '/' + (today.getMonth()+1) + '/' + today.getFullYear();
+  let time = today.getHours() + ":" + today.getMinutes();
+  let dateTime = 'On ' + date + ' At '+ time;
   const comment = { name, message, time:dateTime };
   comments.push(comment);
   return res.status(200).json(comment);
 });
 
-app.get('/viewComments', async (req, res) => {
-  return res.json(comments);
+app.get('/viewComments/:id', async (req, res) => {
+  let paperId = req.params.id;
+  let commentBlock = comments.filter(comment => comment.paperId === paperId);
+  if(commentBlock.length === 0){
+    return res.json(commentBlock);
+  }
+  return res.json(commentBlock[0].commentz);
 });
 
 app.post('/signup', async (req, res) => {
@@ -171,8 +185,8 @@ app.get('/papers', async (req, res) => {
   //const dir = './uploads';
   //const files = await fs.promises.readdir(dir);
   const id = req.body.id;
-  const papers = files.filter(file => file.userId===id);
-  return res.json(papers);
+  const papersFilter = papers.filter(file => file.userId===id);
+  return res.json(papersFilter);
 });
 
 app.get('/users', async (req,res) => {
@@ -180,7 +194,7 @@ app.get('/users', async (req,res) => {
 });
 
 app.get('/paper', async (req, res) => {
-  const paper = files.filter(paper => paper._id === req.body.id);
+  const paper = papers.filter(paper => paper._id === req.body.id);
   return res.json(paper);
 });
 
