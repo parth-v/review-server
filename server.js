@@ -100,7 +100,7 @@ app.post('/upload',(req, res) => {
 	  } else if (err) {
        return res.status(500).json(err);
     }
-    return res.status(200).send(req.file);
+    return res.status(200).send(req.files);
   });
 });
 
