@@ -10,7 +10,7 @@ const bodyParser = require('body-parser');
 var comments = [
   {
     _id: "AAA",
-    paperId: 'aa',
+    articleId: 'aa',
     commentz: [
       {
         name: 'User1',
@@ -38,7 +38,7 @@ var users = [
     email: 'author@g.com',
     password: 'author',
     role: "author",
-    papers: [
+    articles: [
       "aa",
       "bb"
     ]
@@ -48,18 +48,18 @@ var users = [
     email: 'reviewer@g.com',
     password: 'reviewer',
     role: "reviewer",
-    papers: [
+    articles: [
       "aa"
     ]
   }
 ];
 
-var papers = [
+var articles = [
   {
     _id: "aa",
     location: "1596461666683-sample.pdf",
     name: "2020 Vol 10",
-    abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this paper we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
+    abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this article we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
     userId: "2",
     authorEmail: "author@g.com",
     comments: [
@@ -71,7 +71,7 @@ var papers = [
     location: "1596461666686-dummy.pdf",
     name: "2020 Vol 20",
     authorEmail: "author@g.com",
-    abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this paper we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
+    abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this article we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
     userId: "2",
     comments: [
     ]
@@ -80,7 +80,7 @@ var papers = [
     _id: "cc",
     location: "1596463893931-sample.pdf",
     name: "2020 Vol 30",
-    abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this paper we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
+    abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this article we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
     userId: "2",
     authorEmail: "author@g.com",
     comments: [
@@ -90,7 +90,7 @@ var papers = [
     _id: "dd",
     location: "1596463893932-dummy.pdf",
     name: "2020 Vol 39",
-    abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this paper we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
+    abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this article we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
     userId: "2",
     authorEmail: "author@g.com",
     comments: [
@@ -122,7 +122,20 @@ var storage = multer.diskStorage({
 var upload = multer({ storage }).array('file');
 
 app.post('/upload',(req, res) => {
+  //console.log(req.body, req.files);
+  //return res.json("success");
   upload(req, res, (err) => {
+    const {name, abstract} = req.body;
+    const article = {
+      _id: "ee", 
+      location:req.files.filename,
+      name,
+      abstract, 
+      userId:"2", 
+      authorEmail: "author@g.com",
+      comments: []
+    }
+    articles.push(article); 
 	  if (err instanceof multer.MulterError) {
 	      return res.status(500).json(err);
 	  } else if (err) {
@@ -136,12 +149,12 @@ app.get('/view', async (req, res) => {
   // const dir = './uploads';
   // const files = await fs.promises.readdir(dir);
   // return res.json(files);
-  return res.json(papers);
+  return res.json(articles);
 });
 
-app.get('/download', (req, res) => {
+app.get('/download/:name', (req, res) => {
   const dir = './uploads/';
-  const filePath = dir + req.query.name;
+  const filePath = dir + req.params.name;
   console.log(filePath);
   return res.download(filePath);
 });
@@ -159,8 +172,8 @@ app.post('/comment', (req, res) => {
 });
 
 app.get('/viewComments/:id', async (req, res) => {
-  let paperId = req.params.id;
-  let commentBlock = comments.filter(comment => comment.paperId === paperId);
+  let articleId = req.params.id;
+  let commentBlock = comments.filter(comment => comment.articleId === articleId);
   if(commentBlock.length === 0){
     return res.json(commentBlock);
   }
@@ -208,23 +221,23 @@ app.post('/signin',async (req, res) => {
   }
 });
 
-app.get('/papers', async (req, res) => {
+app.get('/articles', async (req, res) => {
   //const tracks = await Track.find({ userId: req.user._id });
   //res.send(tracks); 
   //const dir = './uploads';
   //const files = await fs.promises.readdir(dir);
   const id = req.body.id;
-  const papersFilter = papers.filter(file => file.userId===id);
-  return res.json(papersFilter);
+  const articlesFilter = articles.filter(file => file.userId===id);
+  return res.json(articlesFilter);
 });
 
 app.get('/users', async (req,res) => {
   return res.json(users);
 });
 
-app.get('/paper', async (req, res) => {
-  const paper = papers.filter(paper => paper._id === req.body.id);
-  return res.json(paper);
+app.get('/article/:id', async (req, res) => {
+  const article = articles.filter(article => article._id === req.body.id);
+  return res.json(article);
 });
 
 app.get('/user', async(req, res) => {
@@ -232,9 +245,9 @@ app.get('/user', async(req, res) => {
   return res.json(user);
 });
 
-app.get('/papercomm', async (req, res) => {
-  const id = req.body.id;
-  const commentes = comments.filter(comment => comment.paperId===id);
+app.get('/articlecomments/:id', async (req, res) => {
+  const id = req.params.id;
+  const commentes = comments.filter(comment => comment.articleId===id);
   if(commentes.length>0)
   {
     //console.log(commentes, commentes.commentz);
@@ -245,7 +258,7 @@ app.get('/papercomm', async (req, res) => {
   }
 });
 
-// app.post('/paper', async (req, res) => {
+// app.post('/article', async (req, res) => {
 //   const { name, files, user } = req.body;
 
 //   if(!name || !files || !user) {
