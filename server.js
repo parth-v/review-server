@@ -57,17 +57,42 @@ var users = [
 var papers = [
   {
     _id: "aa",
-    name: "Sample.pdf",
+    location: "1596461666683-sample.pdf",
+    name: "2020 Vol 10",
     abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this paper we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
-    userId: "1",
+    userId: "2",
+    authorEmail: "author@g.com",
     comments: [
       "AAA"
     ]
   },
   {
     _id: "bb",
-    name: "Dummy.pdf",
+    location: "1596461666686-dummy.pdf",
+    name: "2020 Vol 20",
+    authorEmail: "author@g.com",
+    abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this paper we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
     userId: "2",
+    comments: [
+    ]
+  },
+  {
+    _id: "cc",
+    location: "1596463893931-sample.pdf",
+    name: "2020 Vol 30",
+    abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this paper we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
+    userId: "2",
+    authorEmail: "author@g.com",
+    comments: [
+    ]
+  },
+  {
+    _id: "dd",
+    location: "1596463893932-dummy.pdf",
+    name: "2020 Vol 39",
+    abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this paper we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
+    userId: "2",
+    authorEmail: "author@g.com",
     comments: [
     ]
   }
@@ -108,9 +133,10 @@ app.post('/upload',(req, res) => {
 });
 
 app.get('/view', async (req, res) => {
-  const dir = './uploads';
-  const files = await fs.promises.readdir(dir);
-  return res.json(files);
+  // const dir = './uploads';
+  // const files = await fs.promises.readdir(dir);
+  // return res.json(files);
+  return res.json(papers);
 });
 
 app.get('/download', (req, res) => {
