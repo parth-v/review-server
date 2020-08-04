@@ -58,6 +58,7 @@ var papers = [
   {
     _id: "aa",
     name: "Sample.pdf",
+    abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this paper we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
     userId: "1",
     comments: [
       "AAA"
@@ -66,7 +67,9 @@ var papers = [
   {
     _id: "bb",
     name: "Dummy.pdf",
-    userId: "2"
+    userId: "2",
+    comments: [
+    ]
   }
 ];
 // const today = new Date();
