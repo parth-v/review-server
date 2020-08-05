@@ -59,6 +59,7 @@ var articles = [
     _id: "aa",
     location: "1596461666683-sample.pdf",
     name: "2020 Vol 10",
+    status: "Published",
     abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this article we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
     userId: "2",
     authorEmail: "author@g.com",
@@ -70,6 +71,7 @@ var articles = [
     _id: "bb",
     location: "1596461666686-dummy.pdf",
     name: "2020 Vol 20",
+    status: "Review pending",
     authorEmail: "author@g.com",
     abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this article we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
     userId: "2",
@@ -80,6 +82,7 @@ var articles = [
     _id: "cc",
     location: "1596463893931-sample.pdf",
     name: "2020 Vol 30",
+    status: "Review pending",
     abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this article we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
     userId: "2",
     authorEmail: "author@g.com",
@@ -90,6 +93,7 @@ var articles = [
     _id: "dd",
     location: "1596463893932-dummy.pdf",
     name: "2020 Vol 39",
+    status: "Published",
     abstract: "Integral equations for the analysis of microstrip reflectarrays consisting of thin perfectly conducting patches generally employ edge conditions in the basis functions for good convergence. The finite conductivity of a practical structure is treated as a perturbation by using the well-known Leontovich boundary condition. The Galerkin technique for the latter results in diverging integrals in moment matrix elements corresponding to edge conditions in basis functions approaching infinity across the current flow direction. Previously a criterion to stop the evaluation of the diverging integrals at a distance from the edge was proposed. In this article we show that excellent results may be achieved by simply eliminating relevant edge conditions in the testing functions in the moment method.",
     userId: "2",
     authorEmail: "author@g.com",
@@ -126,8 +130,10 @@ app.post('/upload',(req, res) => {
   //return res.json("success");
   upload(req, res, (err) => {
     const {name, abstract} = req.body;
+    const size = articles.length;
+    const _id = articles[size-1]+1; 
     const article = {
-      _id: "ee", 
+      _id,
       location:req.files.filename,
       name,
       abstract, 
@@ -145,7 +151,7 @@ app.post('/upload',(req, res) => {
   });
 });
 
-app.get('/view', async (req, res) => {
+app.get('/articles', async (req, res) => {
   // const dir = './uploads';
   // const files = await fs.promises.readdir(dir);
   // return res.json(files);
@@ -160,18 +166,19 @@ app.get('/download/:name', (req, res) => {
 });
 
 app.post('/comment', (req, res) => {
-  const name = req.body.name;
-  const message = req.body.message;
+  const name = req.body.comment.name;
+  const message = req.body.comment.message;
   let today = new Date();
   let date = today.getDate() + '/' + (today.getMonth()+1) + '/' + today.getFullYear();
   let time = today.getHours() + ":" + today.getMinutes();
   let dateTime = 'On ' + date + ' At '+ time;
   const comment = { name, message, time:dateTime };
   comments.push(comment);
+  console.log(comment);
   return res.status(200).json(comment);
 });
 
-app.get('/viewComments/:id', async (req, res) => {
+app.get('/comments/:id', async (req, res) => {
   let articleId = req.params.id;
   let commentBlock = comments.filter(comment => comment.articleId === articleId);
   if(commentBlock.length === 0){
@@ -181,12 +188,15 @@ app.get('/viewComments/:id', async (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-  
   const { email, password } = req.body;
+  if(!email || !password) {
+    return res.status(422).send({ error: 'Must provide email and password' });
+  }
   try {
     //const user = new User({ email, password });
     //await user.save();
-    const user = users.push({ _id:'3', email, password });
+    const id = "" + users.length+1;
+    const user = users.push({ _id:id, email, password, role: "author", articles: [] });
     console.log(users);
     const token = jwt.sign({ userId: user._id }, 'MY_SECRET_KEY');
     res.send({ token });
@@ -221,12 +231,12 @@ app.post('/signin',async (req, res) => {
   }
 });
 
-app.get('/articles', async (req, res) => {
+app.get('/articles/:id', async (req, res) => {
   //const tracks = await Track.find({ userId: req.user._id });
   //res.send(tracks); 
   //const dir = './uploads';
   //const files = await fs.promises.readdir(dir);
-  const id = req.body.id;
+  const id = req.params.id;
   const articlesFilter = articles.filter(file => file.userId===id);
   return res.json(articlesFilter);
 });
