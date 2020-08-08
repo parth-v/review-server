@@ -29,12 +29,14 @@ var comments = [
 var users = [
   {
     _id: '1',
+    name: "Admin",
     email: 'admin@g.com',
     password: 'admin',
     role: "admin"
   },
   {
     _id: '2',
+    name:"Author",
     email: 'author@g.com',
     password: 'author',
     role: "author",
@@ -45,6 +47,7 @@ var users = [
   },
   {
     _id: '3',
+    name:"Reviewer",
     email: 'reviewer@g.com',
     password: 'reviewer',
     role: "reviewer",
@@ -188,18 +191,19 @@ app.get('/comments/:id', async (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-  const { email, password } = req.body;
-  if(!email || !password) {
-    return res.status(422).send({ error: 'Must provide email and password' });
+  const { email, password, name } = req.body;
+  if(!email || !password || !name) {
+    return res.status(422).send({ error: 'Must provide all the details!' });
   }
   try {
     //const user = new User({ email, password });
     //await user.save();
     const id = "" + users.length+1;
-    const user = users.push({ _id:id, email, password, role: "author", articles: [] });
+    const user = users.push({ _id:id,name, email, password, role: "author", articles: [] });
     console.log(users);
     const token = jwt.sign({ userId: user._id }, 'MY_SECRET_KEY');
-    res.send({ token });
+    {let { password, ...userDetail } = user;
+    res.send({ token, userDetail });}
   } catch(err) {
     return res.status(422).send(err.message);
   }
@@ -225,7 +229,9 @@ app.post('/signin',async (req, res) => {
     //await user.comparePassword(password);
     if(user.password !== password) { throw new Error(); }
     const token = jwt.sign({ userId: user._id }, 'MY_SECRET_KEY');
-    res.send({ token });
+    {let { password, ...userDetail } = user;
+    console.log({ token, userDetail });
+    res.send({ token, userDetail });}
   } catch (err) {
     return res.status(422).send({ error: 'Invalid email or password' });
   }
