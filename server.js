@@ -164,7 +164,7 @@ app.get('/articles', async (req, res) => {
 app.get('/download/:name', (req, res) => {
   const dir = './uploads/';
   const filePath = dir + req.params.name;
-  console.log(filePath);
+  //console.log(filePath);
   return res.download(filePath);
 });
 
@@ -177,7 +177,7 @@ app.post('/comment', (req, res) => {
   let dateTime = 'On ' + date + ' At '+ time;
   const comment = { name, message, time:dateTime };
   comments.push(comment);
-  console.log(comment);
+  //console.log(comment);
   return res.status(200).json(comment);
 });
 
@@ -200,7 +200,7 @@ app.post('/signup', async (req, res) => {
     //await user.save();
     const id = "" + users.length+1;
     const user = users.push({ _id:id,name, email, password, role: "author", articles: [] });
-    console.log(users);
+    //console.log(users);
     const token = jwt.sign({ userId: user._id }, 'MY_SECRET_KEY');
     {let { password, ...userDetail } = user;
     res.send({ token, userDetail });}
@@ -230,7 +230,7 @@ app.post('/signin',async (req, res) => {
     if(user.password !== password) { throw new Error(); }
     const token = jwt.sign({ userId: user._id }, 'MY_SECRET_KEY');
     {let { password, ...userDetail } = user;
-    console.log({ token, userDetail });
+    //console.log({ token, userDetail });
     res.send({ token, userDetail });}
   } catch (err) {
     return res.status(422).send({ error: 'Invalid email or password' });
