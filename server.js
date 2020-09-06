@@ -13,12 +13,12 @@ var comments = [
     articleId: 'aa',
     commentz: [
       {
-        name: 'User1',
+        name: 'User 1',
         message: 'I think the article is great!!',
         time: "On 3/8/2020 At 23:15"
       },
       {
-        name: 'User2',
+        name: 'User 2',
         message: 'Its perfect!!',
         time: "On 3/8/2020 At 23:45"
       }
@@ -104,10 +104,6 @@ var articles = [
     ]
   }
 ];
-// const today = new Date();
-// const date = today.getDate() + '/' + (today.getMonth()+1) + '/' + today.getFullYear();
-// const time = today.getHours() + ":" + today.getMinutes();
-// const dateTime = 'On ' + date + ' At '+ time;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -129,8 +125,6 @@ var storage = multer.diskStorage({
 var upload = multer({ storage }).array('file');
 
 app.post('/upload',(req, res) => {
-  //console.log(req.body, req.files);
-  //return res.json("success");
   upload(req, res, (err) => {
     const {name, abstract} = req.body;
     const size = articles.length;
@@ -155,9 +149,6 @@ app.post('/upload',(req, res) => {
 });
 
 app.get('/articles', async (req, res) => {
-  // const dir = './uploads';
-  // const files = await fs.promises.readdir(dir);
-  // return res.json(files);
   return res.json(articles);
 });
 
@@ -177,7 +168,6 @@ app.post('/comment', (req, res) => {
   let dateTime = 'On ' + date + ' At '+ time;
   const comment = { name, message, time:dateTime };
   comments.push(comment);
-  //console.log(comment);
   return res.status(200).json(comment);
 });
 
@@ -196,8 +186,6 @@ app.post('/signup', async (req, res) => {
     return res.status(422).send({ error: 'Must provide all the details!' });
   }
   try {
-    //const user = new User({ email, password });
-    //await user.save();
     const id = "" + users.length+1;
     const user = users.push({ _id:id,name, email, password, role: "author", articles: [] });
     //console.log(users);
@@ -217,16 +205,13 @@ app.post('/signin',async (req, res) => {
     return res.status(422).send({ error: 'Must provide email and password' });
   }
 
-  //const user = await User.findOne({ email });
   const user = users.find((user) => user.email === email);
 
   if(!user) {
-    //return res.status(400).json("Wrong credentials!");
     return res.status(422).send({ error: 'Invalid email or password' });
   }
 
   try {
-    //await user.comparePassword(password);
     if(user.password !== password) { throw new Error(); }
     const token = jwt.sign({ userId: user._id }, 'MY_SECRET_KEY');
     {let { password, ...userDetail } = user;
@@ -238,10 +223,6 @@ app.post('/signin',async (req, res) => {
 });
 
 app.get('/articles/:id', async (req, res) => {
-  //const tracks = await Track.find({ userId: req.user._id });
-  //res.send(tracks); 
-  //const dir = './uploads';
-  //const files = await fs.promises.readdir(dir);
   const id = req.params.id;
   const articlesFilter = articles.filter(file => file.userId===id);
   return res.json(articlesFilter);
@@ -266,28 +247,11 @@ app.get('/articlecomments/:id', async (req, res) => {
   const commentes = comments.filter(comment => comment.articleId===id);
   if(commentes.length>0)
   {
-    //console.log(commentes, commentes.commentz);
     return res.json(commentes[0].commentz);
   }
   else {
     return res.json(commentes);
   }
 });
-
-// app.post('/article', async (req, res) => {
-//   const { name, files, user } = req.body;
-
-//   if(!name || !files || !user) {
-//     return res.status(422).send({ error: 'You must provide name and files'});
-//   }
-
-//   // try {
-//   //   const track = new Track({ name, files, userId: req.user._id });
-//   //   await track.save();
-//   //   res.send(track);
-//   // } catch(err) {
-//   //   res.status(422).send({ error: err.message }); 
-//   // }
-// });
 
 app.listen(8000, () => console.log('App running on port 8000') );
